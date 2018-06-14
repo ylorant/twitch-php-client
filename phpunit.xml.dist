@@ -1,0 +1,18 @@
+<phpunit bootstrap="vendor/autoload.php">
+    <!-- Settings as constants -->
+    <php>
+        <const name="CLIENT_ID" value="" />
+        <const name="CLIENT_SECRET" value="" />
+        <const name="REDIRECT_URI" value="" />
+        <const name="ACCESS_TOKEN" value="" />
+        <const name="ACCESS_REFRESH" value="" />
+        <const name="ACCESS_CHANNEL" value="" />
+    </php>
+
+    <!-- Test suites -->
+    <testsuites>
+        <testsuite name="tests">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
