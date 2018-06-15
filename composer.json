@@ -1,7 +1,7 @@
 {
     "name": "ylorant/twitch-php-client",
     "description": "PHP client for Twitch's multiple APIs, easily extendable and embeddable.",
-    "version": "0.1",
+    "version": "1.0",
     "autoload": {
         "psr-4": {
             "TwitchClient\\": "src/",
