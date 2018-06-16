@@ -80,11 +80,11 @@ class Users extends Service
      * if you just need the userId and nothing else.
      * 
      * @param string $username The username to get the user ID of.
-     * @param array &$userInfo A reference to put the user info in when returned by the API.
+     * @param array &$userInfo A reference to put the user info in when returned by the API. Optional.
      * 
      * @return int The user ID for the requested user, or null if the user is not found.
      */
-    public function getUserId($username, &$userInfo)
+    public function getUserId($username, &$userInfo = null)
     {
         $response = $this->kraken->query(Client::QUERY_TYPE_GET, "/users", ['login' => $username]);
         
