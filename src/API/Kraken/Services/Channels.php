@@ -27,15 +27,23 @@ class Channels extends Service
      * Fetch informations for a given channel.
      * Basically executes the API call to get channel data from Twitch and returns it.
      *
-     * @param $channel The channel name.
-     * @return Available information as stdClass.
+     * @param string|int|null $channel The channel name, ID or NULL to get the info of the channel tied to the 
+     *                                 token ID given as default.
+     * @return stdClass|null Available information as stdClass or null if the channel is not found.
      *
      * @see https://github.com/justintv/Twitch-API/blob/master/v3_resources/channels.md#get-channelschannel
      */
-    public function info($channel)
+    public function info($channel = null)
     {
-        $channelId = $this->kraken->getService('users')->getUserId($channel);
-        return $this->kraken->query(Client::QUERY_TYPE_GET, "/channels/$channelId");
+        if (!empty($channel) && !is_numeric($channel)) {
+            $channel = $this->kraken->getService('users')->getUserId($channel);
+
+            if (is_null($channel)) {
+                return null;
+            }
+        }
+
+        return $this->kraken->query(Client::QUERY_TYPE_GET, $channel ? "/channels/$channel" : "/channel");
     }
 
     /**
@@ -73,30 +81,7 @@ class Channels extends Service
         $channelId = $this->kraken->getService('users')->getUserId($channel);
         $userList = $this->kraken->query(Client::QUERY_TYPE_GET, "/channels/$channelId/follows");
 
-        $return = new stdClass();
-        $return->total = $userList->_total;
-        $return->cursor = $userList->_cursor;
-        $return->list = array();
-
-        // Handling the return format
-        foreach ($userList->follows as $user) {
-            // If needed, fetch a lot of info
-            if (!empty($parameters['detailed_info'])) {
-                $userObject = new stdClass();
-                $userObject->name = $user->user->name;
-                $userObject->followDate = new DateTime($user->created_at);
-                $userObject->registrationDate = new DateTime($user->user->created_at);
-                $userObject->displayName = $user->user->display_name;
-                $userObject->type = $user->user->type;
-                $userObject->logo = $user->user->logo;
-                $userObject->bio = $user->user->bio;
-                $userObject->hasNotifications = $user->notifications;
-            } else { // Return only the nickname by default
-                $return->list[] = $user->user->name;
-            }
-        }
-
-        return $return;
+        return $userList;
     }
 
     /**
@@ -104,19 +89,20 @@ class Channels extends Service
      *
      * @param $channel channel to update.
      * @param array $parameters The parameters to update. Available parameters:
-     *                    - title: The channel title
+     *                    - status: The channel title
      *                    - game: The channel game
      *                    - delay: The channel delay, in seconds.
      *                             It requires the access token to be one from the channel owner.
      *                    - channel_feed-enabled: Set to true to enable the channel feed.
      *                                            Requires an access token from the channel owner.
-     * @return mixed The reply from the API.
+     * @return mixed The reply from the API, which is the updated status for the channel. If it doesn't work, it returns
+     *               false.
      */
     public function update($channel, array $parameters = [])
     {
         $queryParameters = [
             "channel" => [
-                'status' => $parameters['title'] ?? null,
+                'status' => $parameters['status'] ?? null,
                 'game' => $parameters['game'] ?? null,
                 'delay' => $parameters['delay'] ?? null,
                 'channel_feed_enabled' => $parameters['channel_feed_enabled'] ?? null
@@ -126,7 +112,7 @@ class Channels extends Service
         $queryParameters["channel"] = array_filter($queryParameters["channel"]);
 
         $channelId = $this->kraken->getService('users')->getUserId($channel);
-        $response = $this->query(Client::QUERY_TYPE_PUT, "/$channelId", $queryParameters, $channel);
+        $response = $this->kraken->query(Client::QUERY_TYPE_PUT, "/channels/$channelId", $queryParameters, $channel);
 
         return $response;
     }

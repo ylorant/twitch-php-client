@@ -59,16 +59,8 @@ class Users extends Service
         if (is_null($user)) {
             $user = $this->kraken->query(Client::QUERY_TYPE_GET, (!empty($userId) ? "/users/$userId" : "/user"));
         }
-
-        $userObject = new stdClass();
-        $userObject->id = $user->_id;
-        $userObject->name = $user->name;
-        $userObject->registrationDate = new DateTime($user->created_at);
-        $userObject->displayName = $user->display_name;
-        $userObject->type = $user->type;
-        $userObject->bio = $user->bio;
-
-        return $userObject;
+        
+        return $user;
     }
 
     /**

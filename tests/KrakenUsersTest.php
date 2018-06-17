@@ -10,7 +10,7 @@ class KrakenUsersTest extends TestCase
     use LoadConfigTrait;
 
     // User info structure
-    const USER_INFO_OBJ_ATTRIBUTES = ['id', 'name', 'registrationDate', 'displayName', 'type', 'bio'];
+    const USER_INFO_OBJ_ATTRIBUTES = ['_id', 'name', 'created_at', 'display_name', 'type', 'bio'];
 
     /**
      * Tests that we can fetch an user's info by its nickname. It will reply the user name for chaining.
@@ -32,7 +32,7 @@ class KrakenUsersTest extends TestCase
 
         $this->assertEquals(ACCESS_CHANNEL, $user->name);
 
-        return $user->id;
+        return $user->_id;
     }
 
     /**
