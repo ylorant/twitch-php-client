@@ -1,8 +1,8 @@
 # Twitch PHP Client
 
 This library is a PHP client for the Twitch APIs. It will allow you to send requests to Twitch easily, using
-authentication or not, with a simple design that allows embedding into services. It also doesn't rely on any PHP
-dependency, it only needs the cURL library to be installed.
+authentication or not, with a simple design that allows embedding into services. It also relies on as few PHP
+dependencies as possible, it only needs the cURL extension to be installed, and depends on Monolog for logging.
 
 Compatibility : PHP 7.0+
 
