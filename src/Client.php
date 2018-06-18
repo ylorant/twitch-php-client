@@ -2,8 +2,9 @@
 namespace TwitchClient;
 
 use TwitchClient\Authentication\TokenProvider;
-use Monolog\Logger;
 use TwitchClient\API\Auth\Authentication;
+use Psr\Log\LoggerInterface;
+use TwitchClient\Log\DummyLogger;
 
 abstract class Client
 {
@@ -56,10 +57,17 @@ abstract class Client
      */
     public static function getLogger()
     {
+        // If there isn't any logger loaded, we load a dummy
         if (empty(self::$logger)) {
-            self::$logger = new Logger('twitch-php-client');
+            return new DummyLogger();
         }
+
         return self::$logger;
+    }
+
+    public static function setLogger(LoggerInterface $logger)
+    {
+        self::$logger = $logger;
     }
 
     /**

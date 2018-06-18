@@ -11,7 +11,7 @@ use Monolog\Formatter\LineFormatter;
 trait LoadConfigTrait
 {
     protected static $tokenProvider = null;
-    protected static $loggerHandler = null;
+    protected static $logger = null;
 
     /**
      * Sets up common used parts in tests (token provider, logger).
@@ -29,12 +29,18 @@ trait LoadConfigTrait
         ];
 
         self::$tokenProvider->setTokensDatabase($tokenList);
+
+        // Detting up the test logger using Monolog
+        self::$logger = new Logger('twitch-php-client');
         
-        self::$loggerHandler = new StreamHandler(__DIR__ . "/../client_log.txt", Logger::DEBUG);
+        $loggerHandler = new StreamHandler(__DIR__ . "/../client_log.txt", Logger::DEBUG);
+        
         $output = "[%datetime%] %level_name%: %message%\n";
         $formatter = new LineFormatter($output, "Y-m-d H:i:s");
-        self::$loggerHandler->setFormatter($formatter);
+        
+        $loggerHandler->setFormatter($formatter);
+        self::$logger->pushHandler($loggerHandler);
 
-        Client::getLogger()->pushHandler(self::$loggerHandler);
+        Client::setLogger(self::$logger);
     }
 }

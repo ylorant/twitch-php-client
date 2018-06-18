@@ -2,7 +2,8 @@
 
 This library is a PHP client for the Twitch APIs. It will allow you to send requests to Twitch easily, using
 authentication or not, with a simple design that allows embedding into services. It also relies on as few PHP
-dependencies as possible, it only needs the cURL extension to be installed, and depends on Monolog for logging.
+dependencies as possible, it only needs the cURL extension to be installed, and depends on `psr/log` for its
+LoggerInterface.
 
 Compatibility : PHP 7.0+
 
@@ -86,6 +87,14 @@ the tokens once, you can use the `DefaultTokenProvider` to implement a standard 
 client.
 
 ## Testing
+
+Before testing, you need to install development dependencies :
+
+```
+composer install --dev
+```
+
+This will install phpunit, Faker and Monolog to ensure debbuging logs, fake data and the testing framework itself.
 
 To test the app, duplicate and rename the `phpunit.xml.dist` file and rename it to `phpunit.xml`, then fill out in it
 the info relative to the app credentials (you can use the `tests/authentication.php` file to generate an access token).
