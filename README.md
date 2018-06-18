@@ -52,7 +52,7 @@ use TwitchClient\API\Auth\Authentication;
 use TwitchClient\Authentication\DefaultTokenProvider;
 
 // Create the token provider using the client ID and secret.
-$tokenProvider = new TokenProvider('client_id', 'client_secret');
+$tokenProvider = new DefaultTokenProvider('client_id', 'client_secret');
 $redirectURI = 'http://localhost/'; // The redirect URI configured in the app settings on Twitch.
                                     // Here we'll suppose that we're on a single page that handles both.
 
