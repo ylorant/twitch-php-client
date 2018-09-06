@@ -1,5 +1,4 @@
 <?php
-
 namespace TwitchClient\API\Kraken\Services;
 
 use TwitchClient\API\Kraken\Kraken;

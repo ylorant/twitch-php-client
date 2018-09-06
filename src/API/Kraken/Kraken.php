@@ -1,5 +1,4 @@
 <?php
-
 namespace TwitchClient\API\Kraken;
 
 use ReflectionClass;

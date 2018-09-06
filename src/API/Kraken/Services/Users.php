@@ -38,6 +38,8 @@ class Users extends Service
      *                                 as an integer. Can be omitted when a default target exists, then it will
      *                                 retrieve the info about that target.
      * @return stdClass containing the user info.
+     * 
+     * @see https://dev.twitch.tv/docs/v5/reference/users/#get-user
      */
     public function info($usernameOrId = null)
     {
@@ -75,6 +77,8 @@ class Users extends Service
      * @param array &$userInfo A reference to put the user info in when returned by the API. Optional.
      * 
      * @return int The user ID for the requested user, or null if the user is not found.
+     * 
+     * @see https://dev.twitch.tv/docs/v5/reference/users/#get-users
      */
     public function getUserId($username, &$userInfo = null)
     {

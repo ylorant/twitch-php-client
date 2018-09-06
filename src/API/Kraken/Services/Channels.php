@@ -1,5 +1,4 @@
 <?php
-
 namespace TwitchClient\API\Kraken\Services;
 
 use TwitchClient\API\Kraken\Kraken;
@@ -31,7 +30,7 @@ class Channels extends Service
      *                                 token ID given as default.
      * @return stdClass|null Available information as stdClass or null if the channel is not found.
      *
-     * @see https://github.com/justintv/Twitch-API/blob/master/v3_resources/channels.md#get-channelschannel
+     * @see https://dev.twitch.tv/docs/v5/reference/channels/#get-channel-by-id
      */
     public function info($channel = null)
     {
@@ -66,7 +65,7 @@ class Channels extends Service
      *                If detailed info is requested, then each user is listed in an object.
      *                If not, only the nickname as a string will be returned in the list.
      *
-     * @see https://github.com/justintv/Twitch-API/blob/master/v3_resources/follows.md#get-channelschannelfollows
+     * @see https://dev.twitch.tv/docs/v5/reference/channels/#get-channel-followers
      */
     public function followers($channel, array $parameters = [])
     {
@@ -97,6 +96,8 @@ class Channels extends Service
      *                                            Requires an access token from the channel owner.
      * @return mixed The reply from the API, which is the updated status for the channel. If it doesn't work, it returns
      *               false.
+     * 
+     * @see https://dev.twitch.tv/docs/v5/reference/channels/#update-channel
      */
     public function update($channel, array $parameters = [])
     {
