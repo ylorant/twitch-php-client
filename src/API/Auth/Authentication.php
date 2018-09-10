@@ -64,17 +64,18 @@ class Authentication extends Client
      */
     public function getAccessTokenFromReply($redirectUri = null)
     {
-        $code = $_GET['code'];
+        $code = $_GET['code'] ?? null;
         
         if(empty($redirectUri)) {
             $redirectUri = explode('?', $_SERVER['REQUEST_URI']);
+            $redirectUri = $redirectUri[0];
         }
 
         if(empty($code)) {
             return false;
         }
 
-        return $this->getAccessToken($code);
+        return $this->getAccessToken($code, $redirectUri);
     }
 
     /**

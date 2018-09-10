@@ -46,18 +46,30 @@ class KrakenUsersTest extends TestCase
         $userInfo = null;
 
         $kraken = new Kraken(self::$tokenProvider);
-        $fetchedUserId = $kraken->users->getUserId(ACCESS_CHANNEL, $userInfo);
+        $fetchedUserId = $kraken->users->fetchUserId(ACCESS_CHANNEL, $userInfo);
 
         $this->assertEquals($userId, $fetchedUserId);
         $this->assertNotNull($userInfo);
+    }
 
-        return $userId;
+    /**
+     * Tests getting the User ID from the cache.
+     * 
+     * @depends testSelfUserInfo
+     */
+    public function testUserIdCache($userId)
+    {
+        $testedUserId = null;
+        $kraken = new Kraken(self::$tokenProvider);
+        $testedUserId = $kraken->users->getUserId(ACCESS_CHANNEL);
+
+        $this->assertEquals($userId, $testedUserId);
     }
 
     /**
      * Tests fetching an user from it's ID.
      * 
-     * @depends testUserId
+     * @depends testSelfUserInfo
      */
     public function testUserInfo($userId)
     {
@@ -71,5 +83,13 @@ class KrakenUsersTest extends TestCase
         foreach (self::USER_INFO_OBJ_ATTRIBUTES as $attr) {
             $this->assertObjectHasAttribute($attr, $userInfo);
         }
+
+        // Test fetching the user by its username (and the cache by the way, since it should be in it after all tests)
+        $newUserInfo = $kraken->users->info($userInfo->name);
+        $this->assertEquals($userInfo, $newUserInfo);
+
+        // Tests fetching an unknown user (thus failing the cache)
+        $nonExistentUser = $kraken->users->info("NonExistentUser". uniqid());
+        $this->assertNull($nonExistentUser);
     }
 }

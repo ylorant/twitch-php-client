@@ -35,7 +35,6 @@ class KrakenChannelTest extends TestCase
     public function testGetChannelInfoById($channelId)
     {
         $kraken = new Kraken(self::$tokenProvider);
-        
         $channelInfo = $kraken->channels->info($channelId);
 
         $this->assertNotEmpty($channelInfo);
@@ -54,12 +53,39 @@ class KrakenChannelTest extends TestCase
     public function testGetChannelInfoByName($name)
     {
         $kraken = new Kraken(self::$tokenProvider);
-        
         $channelInfo = $kraken->channels->info($name);
 
         $this->assertNotEmpty($channelInfo);
         $this->assertInstanceOf(stdClass::class, $channelInfo);
         $this->assertEquals(ACCESS_CHANNEL, $channelInfo->name);
+
+        // Try to get info for a non-existent channel
+        $nonExistentChannelInfo = $kraken->channels->info(uniqid());
+        $this->assertNull($nonExistentChannelInfo);
+    }
+
+    /**
+     * Tests getting a channel's followers, by the channel ID
+     * 
+     * @depends testGetSelfChannelInfo
+     */
+    public function testGetChannelFollowersById($channelId)
+    {
+        $kraken = new Kraken(self::$tokenProvider);
+        $channelFollowers = $kraken->channels->followers($channelId);
+        $this->assertNotEmpty($channelFollowers);
+    }
+
+    /**
+     * Tests getting a channel's followers, by the channel name.
+     * 
+     * @depends testGetChannelInfoById
+     */
+    public function testGetChannelFollowersByName($name)
+    {
+        $kraken = new Kraken(self::$tokenProvider);
+        $channelFollowers = $kraken->channels->followers($name);
+        $this->assertNotEmpty($channelFollowers);
     }
 
     /**

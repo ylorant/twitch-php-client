@@ -51,7 +51,7 @@ class Users extends Service
         } elseif (!is_null($usernameOrId)) {
             // Fetch the data from Twitch and get the user info by the way
             if (!isset(self::$userIdCache[$usernameOrId])) {
-                $userId = $this->getUserId($usernameOrId, $user);
+                $userId = $this->fetchUserId($usernameOrId, $user);
                 self::$userIdCache[$usernameOrId] = $userId;
             } else { // Fetch the data from the cache
                 $userId = self::$userIdCache[$usernameOrId];
@@ -66,8 +66,29 @@ class Users extends Service
     }
 
     /**
-     * Gets the ID of an user. This is a pretty low-level method, it will execute the query right away every time
-     * and return the user ID (along with the other user info with the optional reference).
+     * Gets the ID of an user. This is a higher-level method than fetchUserId() and will cache the user ID for better
+     * performance in repeated calls (but it won't cache it on the disk, so across page calls in a web environment, it
+     * won't be more efficient). The drawback of the caching is that you cannot get the user ID and the user info in
+     * one call. That's why the info() method uses direct calls to fetchUserId() instead of calling this method.
+     * 
+     * @param string $username The username to get the user ID of.
+     * 
+     * @return int The user ID for the requested user, or null if the user is not found.
+     */
+    public function getUserId($username)
+    {
+        // Fetch the data from Twitch and get the user info by the way
+        if (!isset(self::$userIdCache[$username])) {
+            $userId = $this->fetchUserId($username);
+            self::$userIdCache[$username] = $userId;
+        }
+        
+        return self::$userIdCache[$username];
+    }
+
+    /**
+     * Fetches the ID of an user from Twitch API. This is a pretty low-level method, it will execute the query right
+     * away every time and return the user ID (along with the other user info with the optional reference).
      * 
      * Using the info() method with the username as a string is advised over this method since info() has some caching
      * mechanics that are made to provide the requested info using the least amount of requests. Use this method only
@@ -80,7 +101,7 @@ class Users extends Service
      * 
      * @see https://dev.twitch.tv/docs/v5/reference/users/#get-users
      */
-    public function getUserId($username, &$userInfo = null)
+    public function fetchUserId($username, &$userInfo = null)
     {
         $response = $this->kraken->query(Client::QUERY_TYPE_GET, "/users", ['login' => $username]);
         

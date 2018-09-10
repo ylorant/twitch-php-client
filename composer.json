@@ -18,6 +18,12 @@
         "phpunit/phpunit": "^7.2",
         "league/climate": "^3.4",
         "fzaninotto/faker": "^1.7",
-        "monolog/monolog": "^1.23"
+        "monolog/monolog": "^1.23",
+        "phpunit/php-code-coverage": "^6.0"
+    },
+    "scripts": {
+        "test": [
+            "phpdbg -qrr ./vendor/phpunit/phpunit/phpunit"
+        ]
     }
 }

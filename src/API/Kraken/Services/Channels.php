@@ -51,7 +51,7 @@ class Channels extends Service
      * the limitation is present there too. Also, since Twitch supports cursor-based pagination instead of regular one,
      * you'll have to get each page one by one (the cursor for the next page is given in each result).
      *
-     * @param $channel The channel name.
+     * @param string $channel The channel name.
      * @param array $parameters The parameters for the list to retrieve. No parameter is mandatory.
      *                          Available parameters:
      *                            - limit: The limit for the element count in the list.
@@ -77,8 +77,11 @@ class Channels extends Service
 
         $queryParameters = array_filter($queryParameters);
 
-        $channelId = $this->kraken->getService('users')->getUserId($channel);
-        $userList = $this->kraken->query(Client::QUERY_TYPE_GET, "/channels/$channelId/follows");
+        if(!is_numeric($channel)) {
+            $channel = $this->kraken->getService('users')->getUserId($channel);
+        }
+
+        $userList = $this->kraken->query(Client::QUERY_TYPE_GET, "/channels/$channel/follows");
 
         return $userList;
     }
@@ -112,7 +115,9 @@ class Channels extends Service
 
         $queryParameters["channel"] = array_filter($queryParameters["channel"]);
 
-        $channelId = $this->kraken->getService('users')->getUserId($channel);
+        if(!is_numeric($channel)) {
+            $channelId = $this->kraken->getService('users')->getUserId($channel);
+        }
         $response = $this->kraken->query(Client::QUERY_TYPE_PUT, "/channels/$channelId", $queryParameters, $channel);
 
         return $response;
