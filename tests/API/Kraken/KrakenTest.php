@@ -1,8 +1,9 @@
 <?php
-namespace TwitchClient\Tests;
+namespace TwitchClient\Tests\API\Kraken;
 
 use PHPUnit\Framework\TestCase;
 use TwitchClient\API\Kraken\Kraken;
+use TwitchClient\Tests\LoadConfigTrait;
 
 
 class KrakenTest extends TestCase

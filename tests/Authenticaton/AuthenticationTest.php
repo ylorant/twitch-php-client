@@ -1,9 +1,9 @@
 <?php
-namespace TwitchClient\Tests;
+namespace TwitchClient\Tests\Authentication;
 
 use PHPUnit\Framework\TestCase;
 use TwitchClient\API\Auth\Authentication;
-
+use TwitchClient\Tests\LoadConfigTrait;
 
 class AuthenticationTest extends TestCase
 {
@@ -61,6 +61,25 @@ class AuthenticationTest extends TestCase
         $this->assertFalse($authApi->getAccessTokenFromReply());
         $_GET['code'] = uniqid();
         $this->assertFalse($authApi->getAccessTokenFromReply());
+    }
 
+    public function testRefreshToken()
+    {
+        $oldAccessToken = self::$tokenProvider->getAccessToken(ACCESS_CHANNEL);
+        $oldRefreshToken = self::$tokenProvider->getRefreshToken(ACCESS_CHANNEL);
+
+        $authApi = new Authentication(self::$tokenProvider);
+        $reply = $authApi->refreshToken(ACCESS_CHANNEL);
+        $newAccessToken = self::$tokenProvider->getAccessToken(ACCESS_CHANNEL);
+        $newRefreshToken = self::$tokenProvider->getRefreshToken(ACCESS_CHANNEL);
+
+        $this->assertNotNull($reply);
+        $this->assertEquals($reply, $newRefreshToken);
+        $this->assertNotEquals($oldAccessToken, $newAccessToken);
+        $this->assertEquals($oldRefreshToken, $newRefreshToken);
+
+        // Test bad refresh
+        $badReply = $authApi->refreshToken(uniqid());
+        $this->assertFalse($badReply);
     }
 }

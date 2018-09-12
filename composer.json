@@ -22,8 +22,7 @@
         "phpunit/php-code-coverage": "^6.0"
     },
     "scripts": {
-        "test": [
-            "phpdbg -qrr ./vendor/phpunit/phpunit/phpunit"
-        ]
+        "test": "phpunit",
+        "phpdbg-test": "phpdbg -qrr ./vendor/phpunit/phpunit/phpunit"
     }
 }

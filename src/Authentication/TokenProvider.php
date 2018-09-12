@@ -1,6 +1,12 @@
 <?php
 namespace TwitchClient\Authentication;
 
+/**
+ * TokenProvider interface. This interface describes how the program which uses this library should provide the Twitch
+ * tokens to the library. This allows the implementing side to be free of organizing its token storage how it wants.
+ * 
+ * TODO: handle channel name => id matching for targets. Maybe internally ?
+ */
 interface TokenProvider
 {
     /**

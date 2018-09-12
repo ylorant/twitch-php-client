@@ -4,14 +4,14 @@ use TwitchClient\API\Auth\Authentication;
 use TwitchClient\Authentication\DefaultTokenProvider;
 use League\CLImate\CLImate;
 
-require __DIR__. '/../vendor/autoload.php';
+require __DIR__. '/../../vendor/autoload.php';
 
 // Creating output helper
 $climate = new CLImate();
 $climate->out('Authentication test for Twitch PHP client');
 
 // Reading the PHPUnit configuration file to get the clientID / clientSecret / Redirect URI for the app
-$phpUnitXML = new SimpleXMLElement(__DIR__ . "/../phpunit.xml", 0, true);
+$phpUnitXML = new SimpleXMLElement(__DIR__ . "/../../phpunit.xml", 0, true);
 $parameters = [];
 
 foreach($phpUnitXML->php->const as $declaration) {

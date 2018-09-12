@@ -37,13 +37,14 @@ class Users extends Service
      * @param string|int $usernameOrId The nickname of the user, or it's user ID. To use an user ID, you must give it
      *                                 as an integer. Can be omitted when a default target exists, then it will
      *                                 retrieve the info about that target.
-     * @return stdClass containing the user info.
+     * @return stdClass|bool containing the user info. If the user is not found, it will return false.
      * 
      * @see https://dev.twitch.tv/docs/v5/reference/users/#get-user
      */
     public function info($usernameOrId = null)
     {
         $user = null;
+        $userId = null;
 
         // Get the user ID (and the info if a request is made to Twitch)
         if (is_numeric($usernameOrId)) {
@@ -52,12 +53,18 @@ class Users extends Service
             // Fetch the data from Twitch and get the user info by the way
             if (!isset(self::$userIdCache[$usernameOrId])) {
                 $userId = $this->fetchUserId($usernameOrId, $user);
+
+                // User has not been found
+                if(is_null($userId)) {
+                    return false;
+                }
+
                 self::$userIdCache[$usernameOrId] = $userId;
             } else { // Fetch the data from the cache
                 $userId = self::$userIdCache[$usernameOrId];
             }
         }
-        
+
         if (is_null($user)) {
             $user = $this->kraken->query(Client::QUERY_TYPE_GET, (!empty($userId) ? "/users/$userId" : "/user"));
         }
@@ -80,6 +87,12 @@ class Users extends Service
         // Fetch the data from Twitch and get the user info by the way
         if (!isset(self::$userIdCache[$username])) {
             $userId = $this->fetchUserId($username);
+            
+            // Return directly in case of ID not found
+            if(is_null($userId)) {
+                return null;
+            }
+            
             self::$userIdCache[$username] = $userId;
         }
         
@@ -97,7 +110,7 @@ class Users extends Service
      * @param string $username The username to get the user ID of.
      * @param array &$userInfo A reference to put the user info in when returned by the API. Optional.
      * 
-     * @return int The user ID for the requested user, or null if the user is not found.
+     * @return int|null The user ID for the requested user, or null if the user is not found.
      * 
      * @see https://dev.twitch.tv/docs/v5/reference/users/#get-users
      */

@@ -1,12 +1,13 @@
 <?php
-namespace TwitchClient\Tests;
+namespace TwitchClient\Tests\API\Kraken;
 
 use PHPUnit\Framework\TestCase;
 use TwitchClient\API\Kraken\Kraken;
 use stdClass;
 use Faker;
+use TwitchClient\Tests\LoadConfigTrait;
 
-class KrakenChannelTest extends TestCase
+class KrakenChannelsTest extends TestCase
 {
     use LoadConfigTrait;
 
@@ -42,6 +43,10 @@ class KrakenChannelTest extends TestCase
         $this->assertEquals($channelId, $channelInfo->_id);
         $this->assertEquals(ACCESS_CHANNEL, $channelInfo->name);
 
+        // Trying to check if getting a non-existent channel results in null
+        $nonExistentChannel = $kraken->channels->info(-1);
+        $this->assertFalse($nonExistentChannel);
+
         return $channelInfo->name;
     }
 
@@ -61,7 +66,7 @@ class KrakenChannelTest extends TestCase
 
         // Try to get info for a non-existent channel
         $nonExistentChannelInfo = $kraken->channels->info(uniqid());
-        $this->assertNull($nonExistentChannelInfo);
+        $this->assertFalse($nonExistentChannelInfo);
     }
 
     /**
@@ -74,6 +79,10 @@ class KrakenChannelTest extends TestCase
         $kraken = new Kraken(self::$tokenProvider);
         $channelFollowers = $kraken->channels->followers($channelId);
         $this->assertNotEmpty($channelFollowers);
+        
+        // Try to get followers for a non-existent channel
+        $unknownChannelFollowers = $kraken->channels->followers(-1);
+        $this->assertFalse($unknownChannelFollowers);
     }
 
     /**
@@ -86,6 +95,10 @@ class KrakenChannelTest extends TestCase
         $kraken = new Kraken(self::$tokenProvider);
         $channelFollowers = $kraken->channels->followers($name);
         $this->assertNotEmpty($channelFollowers);
+
+        // Try to get followers for a non-existent channel
+        $unknownChannelFollowers = $kraken->channels->followers("NonExistentUser". uniqid());
+        $this->assertFalse($unknownChannelFollowers);
     }
 
     /**
@@ -99,7 +112,7 @@ class KrakenChannelTest extends TestCase
         $newTitle = $faker->sentence();
         $oldInfo = $kraken->channels->info(ACCESS_CHANNEL);
         $updatedInfo = $kraken->channels->update(ACCESS_CHANNEL, ['status' => $newTitle]);
-
+        
         $this->assertNotEmpty($updatedInfo);
         $this->assertEquals(ACCESS_CHANNEL, $updatedInfo->name);
         $this->assertEquals($newTitle, $updatedInfo->status);

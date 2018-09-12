@@ -28,7 +28,7 @@ class Channels extends Service
      *
      * @param string|int|null $channel The channel name, ID or NULL to get the info of the channel tied to the 
      *                                 token ID given as default.
-     * @return stdClass|null Available information as stdClass or null if the channel is not found.
+     * @return stdClass|bool Available information as stdClass or false if the channel is not found.
      *
      * @see https://dev.twitch.tv/docs/v5/reference/channels/#get-channel-by-id
      */
@@ -37,8 +37,8 @@ class Channels extends Service
         if (!empty($channel) && !is_numeric($channel)) {
             $channel = $this->kraken->getService('users')->getUserId($channel);
 
-            if (is_null($channel)) {
-                return null;
+            if(is_null($channel)) {
+                return false;
             }
         }
 
@@ -51,7 +51,7 @@ class Channels extends Service
      * the limitation is present there too. Also, since Twitch supports cursor-based pagination instead of regular one,
      * you'll have to get each page one by one (the cursor for the next page is given in each result).
      *
-     * @param string $channel The channel name.
+     * @param string|int $channel The channel name or ID.
      * @param array $parameters The parameters for the list to retrieve. No parameter is mandatory.
      *                          Available parameters:
      *                            - limit: The limit for the element count in the list.
@@ -61,9 +61,10 @@ class Channels extends Service
      *                                     Order will be by follow time.
      *                            - detailed info: boolean indicating whether to get extended info
      *                                             for each user or only the nickname.
-     * @return object An object containing the resulting list, along with other useful data (count, cursor).
-     *                If detailed info is requested, then each user is listed in an object.
-     *                If not, only the nickname as a string will be returned in the list.
+     * @return object|bool An object containing the resulting list, along with other useful data (count, cursor).
+     *                     If detailed info is requested, then each user is listed in an object.
+     *                     If not, only the nickname as a string will be returned in the list.
+     *                     If the user doesn't exist, it will return false.
      *
      * @see https://dev.twitch.tv/docs/v5/reference/channels/#get-channel-followers
      */
@@ -89,7 +90,7 @@ class Channels extends Service
     /**
      * Updates a channel's data. This method requires to have a valid access token, that can update a channel of course.
      *
-     * @param $channel channel to update.
+     * @param string|int $channel The name or ID of the channel to update.
      * @param array $parameters The parameters to update. Available parameters:
      *                    - status: The channel title
      *                    - game: The channel game
@@ -114,12 +115,12 @@ class Channels extends Service
         ];
 
         $queryParameters["channel"] = array_filter($queryParameters["channel"]);
+        $channelId = $channel;
 
         if(!is_numeric($channel)) {
             $channelId = $this->kraken->getService('users')->getUserId($channel);
         }
-        $response = $this->kraken->query(Client::QUERY_TYPE_PUT, "/channels/$channelId", $queryParameters, $channel);
 
-        return $response;
+        return $this->kraken->query(Client::QUERY_TYPE_PUT, "/channels/$channelId", $queryParameters, $channel);
     }
 }

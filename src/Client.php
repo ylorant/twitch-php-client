@@ -231,7 +231,7 @@ abstract class Client
             return $this->query($type, $url, $parameters, $target, true);
         }
         
-        // Logging errors
+        // Return false on a non-valid code.
         if ($replyCode != 200) {
             return false;
         }

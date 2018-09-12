@@ -1,9 +1,10 @@
 <?php
-namespace TwitchClient\Tests;
+namespace TwitchClient\Tests\API\Kraken;
 
 use PHPUnit\Framework\TestCase;
 use TwitchClient\API\Kraken\Kraken;
 use stdClass;
+use TwitchClient\Tests\LoadConfigTrait;
 
 class KrakenUsersTest extends TestCase
 {
@@ -90,6 +91,6 @@ class KrakenUsersTest extends TestCase
 
         // Tests fetching an unknown user (thus failing the cache)
         $nonExistentUser = $kraken->users->info("NonExistentUser". uniqid());
-        $this->assertNull($nonExistentUser);
+        $this->assertFalse($nonExistentUser);
     }
 }
