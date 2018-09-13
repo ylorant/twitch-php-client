@@ -35,7 +35,7 @@ $tokenProvider = new DefaultTokenProvider('client_id', 'client_secret');
 $kraken = new Kraken($tokenProvider);
 
 // Fetch info for an user, for example
-$userInfo = $kraken->users->info('gamesdonequick');
+$userInfo = $kraken->users->info('esamarathon');
 ```
 
 ## Authentication: getting tokens

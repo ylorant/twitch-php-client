@@ -7,6 +7,10 @@ class Streams extends Service
 {
     const SERVICE_NAME = "streams";
 
+    const STREAM_TYPE_LIVE = "live";
+    const STREAM_TYPE_PLAYLIST = "playlist";
+    const STREAM_TYPE_ALL = "all";
+
     /**
      * Gets the stream information for a specific user. If the user is not streaming, this will return null. If the user
      * is streaming, it will return the stream object, containing the stream info. When needed, this method can also
@@ -33,5 +37,29 @@ class Streams extends Service
         $channelInfo = $reply->channel;
 
         return $reply->stream;
+    }
+
+    /**
+     * Gets a list of currently live streams.
+     * 
+     * @return object The stream list. It can return an empty object if there is no stream available, but on Twitch it
+     *                would rarely be the case.
+     */
+    public function list(array $parameters = [])
+    {
+        $queryParameters = [
+            "channel" => !empty($parameters["channel"]) ? implode(',', (array) $parameters["channel"]) : null,
+            "game" => $parameters["game"] ?? null,
+            "language" => $parameters["language"] ?? null,
+            "stream_type" => $parameters["stream_type"] ?? null,
+            "limit" => $parameters["limit"] ?? null,
+            "offset" => $parameters["offset"] ?? null
+        ];
+
+        $queryParameters = array_filter($queryParameters);
+
+        $streamList = $this->kraken->query(Client::QUERY_TYPE_GET, "/streams/", $queryParameters);
+
+        return $streamList->streams;
     }
 }
