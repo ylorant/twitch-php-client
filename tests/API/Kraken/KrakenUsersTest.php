@@ -92,5 +92,10 @@ class KrakenUsersTest extends TestCase
         // Tests fetching an unknown user (thus failing the cache)
         $nonExistentUser = $kraken->users->info("NonExistentUser". uniqid());
         $this->assertFalse($nonExistentUser);
+
+        // Then drop the cache and test again a valid user to force an empty cache
+        $kraken->users->emptyIdCache();
+        $nonCachedUserInfo = $kraken->users->info($userInfo->name);
+        $this->assertEquals($userInfo, $nonCachedUserInfo);
     }
 }

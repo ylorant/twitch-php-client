@@ -126,4 +126,16 @@ class Users extends Service
         $userInfo = reset($response->users);
         return $userInfo->_id;
     }
+
+    /**
+     * Empties the user ID cache. If some time the plugin needs to empty the user cache database (for example after an
+     * username update or something), this method will cleanup all the users from the ID cache, and then following calls
+     * to user methods will refill the cache.
+     * 
+     * @return void
+     */
+    public function emptyIdCache()
+    {
+        self::$userIdCache = [];
+    }
 }

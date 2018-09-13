@@ -62,4 +62,23 @@ class Streams extends Service
 
         return $streamList->streams;
     }
+
+    /**
+     * Gets the global summary of streams on Twitch (or on a specific game on Twitch). It returns basically two vars :
+     * the total number of streams and the total number of viewers.
+     * 
+     * @param string $game The game to limit the search to.
+     * 
+     * @return array The statistics for the searched games or for all streams on Twitch.
+     */
+    public function summary($game = null)
+    {
+        $queryParameters = [];
+
+        if(!empty($game)) {
+            $queryParameters['game'] = $game;
+        }
+
+        return $this->kraken->query(Client::QUERY_TYPE_GET, "/streams/summary", $queryParameters);
+    }
 }

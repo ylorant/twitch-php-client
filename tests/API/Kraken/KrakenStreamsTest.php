@@ -45,8 +45,9 @@ class KrakenStreamsTest extends TestCase
         $gameStreamList = $kraken->streams->list(["game" => $stream->game]);
         $this->assertNotEmpty($gameStreamList);
         
+        // Comparing games, use strtolower as sometimes games that should be equal have uppercase mismatch
         foreach($gameStreamList as $gameStream) {
-            $this->assertEquals($stream->game, $gameStream->game);
+            $this->assertEquals(strtolower($stream->game), strtolower($gameStream->game));
         }
 
         return $stream->channel->name;
@@ -63,5 +64,24 @@ class KrakenStreamsTest extends TestCase
         $stream = $kraken->streams->info($user);
 
         $this->assertNotNull($stream);
+    }
+
+    /**
+     * Tests getting the stream summary for all games along as for a specific game.
+     */
+    public function testGetStreamsSummary()
+    {
+        $kraken = new Kraken(self::$tokenProvider);
+
+        $streamStats = $kraken->streams->summary();
+        $this->assertNotNull($streamStats);
+        $this->assertObjectHasAttribute('channels', $streamStats);
+        $this->assertObjectHasAttribute('viewers', $streamStats);
+
+        // Using Fortnite as there always should be someone streaming that game
+        $gameStreamStats = $kraken->streams->summary('Fortnite');
+        $this->assertNotNull($gameStreamStats);
+        $this->assertNotEquals($streamStats->channels, $gameStreamStats->channels);
+        $this->assertNotEquals($streamStats->viewers, $gameStreamStats->viewers);
     }
 }
