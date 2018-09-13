@@ -34,7 +34,7 @@ class Streams extends Service
             return null;
         }
 
-        $channelInfo = $reply->channel;
+        $channelInfo = $reply->stream->channel;
 
         return $reply->stream;
     }

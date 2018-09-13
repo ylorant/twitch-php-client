@@ -48,5 +48,20 @@ class KrakenStreamsTest extends TestCase
         foreach($gameStreamList as $gameStream) {
             $this->assertEquals($stream->game, $gameStream->game);
         }
+
+        return $stream->channel->name;
+    }
+
+    /**
+     * Tries to get a stream that is online. Relies on the previous test that gets online streams to feed it.
+     * 
+     * @depends testGetStreamList
+     */
+    public function testGetOnlineStreamInfo($user)
+    {
+        $kraken = new Kraken(self::$tokenProvider);
+        $stream = $kraken->streams->info($user);
+
+        $this->assertNotNull($stream);
     }
 }
