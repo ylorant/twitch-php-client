@@ -21,15 +21,6 @@ class Users extends Service
     protected static $userIdCache = [];
 
     /**
-     * Users constructor.
-     * @param Kraken $kraken
-     */
-    public function __construct(Kraken $kraken)
-    {
-        parent::__construct($kraken);
-    }
-
-    /**
      * Gets info on an user.
      * This method uses an user ID in-memory cache to avoid requesting IDs from Twitch more than once. It will use
      * the cache to allow fetching the user info in at most 1 request.

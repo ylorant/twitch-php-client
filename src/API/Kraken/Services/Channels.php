@@ -14,15 +14,6 @@ class Channels extends Service
     const SERVICE_NAME = "channels";
 
     /**
-     * Channels constructor.
-     * @param Kraken $kraken
-     */
-    public function __construct(Kraken $kraken)
-    {
-        parent::__construct($kraken);
-    }
-
-    /**
      * Fetch informations for a given channel.
      * Basically executes the API call to get channel data from Twitch and returns it.
      *
