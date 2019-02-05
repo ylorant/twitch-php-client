@@ -1,31 +1,28 @@
 <?php
-namespace TwitchClient\API\Kraken;
+namespace TwitchClient\API\Helix;
 
 use ReflectionClass;
 use TwitchClient\Authentication\TokenProvider;
 use TwitchClient\Client;
 
-/**  Twitch Kraken (v5) API client base.
- * Allows to query Twitch's Kraken API servers via HTTP. This class is using Twitch's self-describing API to build queries,
- * along with PHP's magic methods to get names, it'll have mostly auto-building magic shenanigans in it.
+/**  Twitch Helix API client base.
+ * Allows to query Twitch's Helix API through HTTP.
  *
  * To get all of Twitch's API capabilities, go check their doc there :
- * https://dev.twitch.tv/docs/v5/
+ * https://dev.twitch.tv/docs/api/
  */
-class Kraken extends Client
+class Helix extends Client
 {
+    
     protected $services = array();
 
-    const KRAKEN_BASEURL = "https://api.twitch.tv/kraken";
-    const RETURN_MIMETYPE = "application/vnd.twitchtv.v5+json";
-
     // Useful constants
-    const SERVICES_NAMESPACE = "Services";
-    const EXPIRED_TOKEN_ERROR_CODE = 401;
-
-    /**
-     * Constructor, will do a scan of the services directory to discover them.
-     */
+    const HELIX_BASEURL = "https://api.twitch.tv/helix";
+    const SERVICES_NAMESPACE = "Services"; // Here, what Twitch calls "Resources" on its docs are called "Services" to maintain consistency
+                                           // with the Kraken API.
+    const EXPIRED_TOKEN_ERROR_CODE = 400;
+    
+    
     public function __construct(TokenProvider $tokenProvider)
     {
         parent::__construct($tokenProvider);
@@ -33,7 +30,6 @@ class Kraken extends Client
 
         // Set the base HTTP headers on the underlying client
         $this->setBaseHeaders([
-            "Accept" => self::RETURN_MIMETYPE,
             "Client-ID" => $tokenProvider->getClientID()
         ]);
     }
@@ -43,44 +39,55 @@ class Kraken extends Client
      */
     public function getTokenHeader($token)
     {
-        return "Authorization: OAuth " . $token;
+        return "Authorization: Bearer " . $token;
     }
 
+    
     /**
-     * Override of the base query method, to prepend the Kraken URL to the query URL.
+     * Override of the base query method, to prepend the Helix URL to the query URL.
      * 
      * @see Client::query()
      */
     public function query($type, $url, array $parameters = [], $accessChannel = null, $skipTokenRefresh = false)
     {
-        // Only append the Kraken base URL if it's not already present in it
-        if(strpos($url, self::KRAKEN_BASEURL) === false) {
-            $url = self::KRAKEN_BASEURL . $url;
+        // Only append the Helix base URL if it's not already present in it
+        if(strpos($url, self::HELIX_BASEURL) === false) {
+            $url = self::HELIX_BASEURL . $url;
         }
 
         return parent::query($type, $url, $parameters, $accessChannel, $skipTokenRefresh);
     }
 
     /**
-     * Override of the base buildQueryString to format the query string as the Kraken API requires it.
+     * Overrides the default client's query string building method to format it as the Helix API requires.
      * 
      * @see Client::buildQueryString()
      */
     public function buildQueryString(array $parameters)
     {
-        // Just pre-handle the parameters as settings the arrays as comma-separated strings
-        foreach($parameters as &$value) {
+        $queryString = "";
+
+        // We must use our own loop because the API uses a non-standard naming scheme for multi-element arrays that we have to
+        // handle manually.
+        foreach($parameters as $key => $value) {
             if(is_array($value)) {
-                $value = join(',', $value);
+                foreach($value as $subvalue) {
+                    $queryString .= "&" . $key . "=" . $subvalue;
+                }
+            } else {
+                $queryString .= "&" . $key . "=" . $value;
             }
         }
-        
-        return parent::buildQueryString($parameters);
+
+        // Remove the initial ampersand that the parameters list has.
+        $queryString = substr($queryString, 1);
+
+        return $queryString;
     }
 
     /**
      * Discovers the available services, by analyzing the folder where they are supposed to be kept.
-     * FIXME: Use a RecursiveDirectoryIterator here
+     * FIXME: Maybe do a trait that Helix and Kraken could use instead of copying what is essentially the same code
      */
     public function discoverServices()
     {

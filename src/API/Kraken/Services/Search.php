@@ -3,6 +3,11 @@ namespace TwitchClient\API\Kraken\Services;
 
 use TwitchClient\Client;
 
+/**
+ * Twitch Kraken API: Search API. Allows sitewide searches from the API.
+ * 
+ * @see https://dev.twitch.tv/docs/v5/reference/search/
+ */
 class Search extends Service
 {
     const SERVICE_NAME = "search";

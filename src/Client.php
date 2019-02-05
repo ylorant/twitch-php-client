@@ -30,6 +30,9 @@ abstract class Client
         self::QUERY_TYPE_PUT
     ]; // Indicates which methods sends their data in the request body
 
+    // Stores the error code that is sent by the API when a token is expired
+    const EXPIRED_TOKEN_ERROR_CODE = null;
+
     /**
      * Constructor.
      * 
@@ -147,7 +150,7 @@ abstract class Client
                 $callUrl .= '?';
             }
 
-            $callUrl .= http_build_query($parameters);
+            $callUrl .= $this->buildQueryString($parameters);
         }
 
         $callUrl = trim($callUrl, '/'); // Remove any trailing slashes from the url endpoint
@@ -218,7 +221,7 @@ abstract class Client
         // Receiving a 401 code could mean our token is expired. We can try to resolve this by
         // asking a refresh token, saving it and retrying. Of course, we don't do that when the query was
         // actually a token refresh.
-        if ($replyCode == 401 && !$skipTokenRefresh) {
+        if ($replyCode == static::EXPIRED_TOKEN_ERROR_CODE && !$skipTokenRefresh) {
             $authenticationAPI = new Authentication($this->tokenProvider);
             $newToken = $authenticationAPI->refreshToken($target);
 
@@ -237,5 +240,20 @@ abstract class Client
         }
 
         return json_decode($reply);
+    }
+
+    /**
+     * Builds the query string that will be sent to the server for queries that don't use an HTTP method that is
+     * using body data (typically GET queries).
+     * By default, this uses PHP's embedded http_build_query, but it can be overridden by children classes to alter
+     * its behaviour.
+     * 
+     * @param array $parameters The parameters to transform into a query string.
+     * 
+     * @return string The formed query string.
+     */
+    public function buildQueryString(array $parameters)
+    {
+        return http_build_query($parameters);
     }
 }

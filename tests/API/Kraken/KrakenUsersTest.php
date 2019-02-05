@@ -5,6 +5,8 @@ use PHPUnit\Framework\TestCase;
 use TwitchClient\API\Kraken\Kraken;
 use stdClass;
 use TwitchClient\Tests\LoadConfigTrait;
+use TwitchClient\API\Kraken\Services\Users;
+use ReflectionClass;
 
 class KrakenUsersTest extends TestCase
 {
@@ -65,6 +67,13 @@ class KrakenUsersTest extends TestCase
         $testedUserId = $kraken->users->getUserId(ACCESS_CHANNEL);
 
         $this->assertEquals($userId, $testedUserId);
+
+        // Inspect the user cache to check the existence of the ID
+        $reflectionClass = new ReflectionClass(Users::class);
+        $staticProperties = $reflectionClass->getStaticProperties();
+        $userIdCache = $staticProperties['userIdCache'];
+
+        $this->assertArrayHasKey(ACCESS_CHANNEL, $userIdCache);
     }
 
     /**
@@ -95,6 +104,13 @@ class KrakenUsersTest extends TestCase
 
         // Then drop the cache and test again a valid user to force an empty cache
         $kraken->users->emptyIdCache();
+        
+        // Assert the cache has been emptied
+        $reflectionClass = new ReflectionClass(Users::class);
+        $staticProperties = $reflectionClass->getStaticProperties();
+        $userIdCache = $staticProperties['userIdCache'];
+        $this->assertArrayNotHasKey($userInfo->name, $userIdCache);
+
         $nonCachedUserInfo = $kraken->users->info($userInfo->name);
         $this->assertEquals($userInfo, $nonCachedUserInfo);
     }

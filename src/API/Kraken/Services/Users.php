@@ -119,7 +119,7 @@ class Users extends Service
     }
 
     /**
-     * Empties the user ID cache. If some time the plugin needs to empty the user cache database (for example after an
+     * Empties the user ID cache. If some time the using code needs to empty the user cache database (for example after an
      * username update or something), this method will cleanup all the users from the ID cache, and then following calls
      * to user methods will refill the cache.
      * 
