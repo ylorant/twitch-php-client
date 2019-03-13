@@ -1,4 +1,6 @@
 # Twitch PHP Client
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fylorant%2Ftwitch-php-client.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fylorant%2Ftwitch-php-client?ref=badge_shield)
+
 
 This library is a PHP client for the Twitch APIs. It will allow you to send requests to Twitch easily, using
 authentication or not, with a simple design that allows embedding into services. It also relies on as few PHP
@@ -99,3 +101,6 @@ This will install phpunit, Faker and Monolog to ensure debbuging logs, fake data
 To test the app, duplicate and rename the `phpunit.xml.dist` file and rename it to `phpunit.xml`, then fill out in it
 the info relative to the app credentials (you can use the `tests/authentication.php` file to generate an access token).
 Once this is done, you can start tests using the `phpunit` command.
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fylorant%2Ftwitch-php-client.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fylorant%2Ftwitch-php-client?ref=badge_large)
