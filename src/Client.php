@@ -274,7 +274,7 @@ abstract class Client
         // Return false on a non-valid code.
         if ($replyCode != 200) {
             $replyData = json_decode($reply);
-            $this->setLastError(['errno' => self::ERROR_API_ERROR, 'error' => $reply->message]);
+            $this->setLastError(['errno' => self::ERROR_API_ERROR, 'error' => $replyData->message]);
             return false;
         }
 
