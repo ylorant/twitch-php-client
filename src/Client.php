@@ -11,6 +11,7 @@ abstract class Client
     protected $tokenProvider;
     protected $baseHeaders;
     protected $defaultTarget;
+    protected $lastError;
 
     /** 
      * @var Logger The Monolog logger for all the clients. It's a singleton that will be instancied at its first 
@@ -33,6 +34,10 @@ abstract class Client
     // Stores the error code that is sent by the API when a token is expired
     const EXPIRED_TOKEN_ERROR_CODE = null;
 
+    // Error constants
+    const ERROR_TOKEN_REFRESH_FAILED = 1; // Token renewal failed
+    const ERROR_API_ERROR = 2; // Error from the API
+
     /**
      * Constructor.
      * 
@@ -41,6 +46,7 @@ abstract class Client
     public function __construct(TokenProvider $tokenProvider)
     {
         $this->baseHeaders = [];
+        $this->lastError = null;
         $this->tokenProvider = $tokenProvider;
     }
 
@@ -71,6 +77,29 @@ abstract class Client
     public static function setLogger(LoggerInterface $logger)
     {
         self::$logger = $logger;
+    }
+
+    /**
+     * Returns the last error the client has encountered.
+     * 
+     * @return array|null The last error as an array with the 'errno' and 'error' keys, or null if no error occured yet.
+     */
+    public function getLastError()
+    {
+        return $this->lastError;
+    }
+
+    /**
+     * Sets the last error the client has encountered.
+     * 
+     * @param array $error The new error to set, with the 'errno' and 'error' keys for respectively the error number and the error message.
+     * 
+     * @return void
+     */
+    protected function setLastError(array $error)
+    {
+        $this->lastError = $error;
+        self::getLogger()->error("[". $error['errno']. "] ". $error['error']);
     }
 
     /**
@@ -217,6 +246,13 @@ abstract class Client
         $logger->debug("HTTP Code: ". $replyCode);
         $logger->debug("Content: ". $reply);
         $logger->debug(""); // Blank log line for lisibility
+        
+        // If there is no HTTP code, we stop right there since it means there's something wrong with the HTTP query itself
+        if(empty($replyCode)) {
+            $curlErrno = curl_errno($curl);
+            $this->setLastError(['errno' => $curlErrno + 1000, 'error' => "cURL error (". $curlErrno. "): ". curl_error($curl)]);
+            return false;
+        }
 
         // Receiving a 401 code could mean our token is expired. We can try to resolve this by
         // asking a refresh token, saving it and retrying. Of course, we don't do that when the query was
@@ -227,6 +263,7 @@ abstract class Client
 
             // We return false if the new token has not been delivered, since it's considered a query failure.
             if (empty($newToken)) {
+                $this->setLastError(['errno' => self::ERROR_TOKEN_REFRESH_FAILED, 'error' => "Could not refresh OAuth token"]);
                 return false;
             }
 
@@ -236,6 +273,8 @@ abstract class Client
         
         // Return false on a non-valid code.
         if ($replyCode != 200) {
+            $replyData = json_decode($reply);
+            $this->setLastError(['errno' => self::ERROR_API_ERROR, 'error' => $reply->message]);
             return false;
         }
 
