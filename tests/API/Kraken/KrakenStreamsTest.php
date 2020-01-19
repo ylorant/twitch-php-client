@@ -78,9 +78,12 @@ class KrakenStreamsTest extends TestCase
         $this->assertObjectHasAttribute('channels', $streamStats);
         $this->assertObjectHasAttribute('viewers', $streamStats);
 
+        $this->markTestIncomplete("Stream summary for games doesn't work anymore on twitch, but still documented.");
+
         // Using Fortnite as there always should be someone streaming that game
         $gameStreamStats = $kraken->streams->summary('Fortnite');
         $this->assertNotNull($gameStreamStats);
+        $this->assertNotEquals(false, $gameStreamStats);
         $this->assertNotEquals($streamStats->channels, $gameStreamStats->channels);
         $this->assertNotEquals($streamStats->viewers, $gameStreamStats->viewers);
     }

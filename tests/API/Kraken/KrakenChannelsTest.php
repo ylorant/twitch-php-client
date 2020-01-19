@@ -117,4 +117,15 @@ class KrakenChannelsTest extends TestCase
         $this->assertEquals(ACCESS_CHANNEL, $updatedInfo->name);
         $this->assertEquals($newTitle, $updatedInfo->status);
     }
+
+    /**
+     * Tests starting a commercial on a channel.
+     */
+    public function testStartCommercial()
+    {
+        $kraken = new Kraken(self::$tokenProvider);
+        $started = $kraken->channels->startCommercial(ACCESS_CHANNEL, 60);
+
+        $this->assertTrue($started);
+    }
 }

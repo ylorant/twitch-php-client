@@ -114,4 +114,38 @@ class Channels extends Service
 
         return $this->kraken->query(Client::QUERY_TYPE_PUT, "/channels/$channelId", $queryParameters, $channel);
     }
+
+    /**
+     * Starts a channel's commercial for the specified amount of time. This method requires to have a valid access token, that
+     * can has commercial access on the channel.
+     * 
+     * @param mixed $channel The channel to start the commercial on.
+     * @param mixed $length The commercial duration.
+     * @return bool True if the commercial started successfully, false if not.
+     */
+    public function startCommercial($channel, $length)
+    {
+        // Filter valid commercial durations
+        if(!in_array($length, [30, 60, 90, 120, 150, 180])) {
+            return false;
+        }
+
+        $channelId = $channel;
+
+        if(!is_numeric($channelId)) {
+            $channelId = $this->kraken->getService('users')->getUserId($channel);
+        }
+
+        $queryParameters = [
+            'length' => $length
+        ];
+
+        $commercialInfo = $this->kraken->query(Client::QUERY_TYPE_POST, "/channels/$channelId/commercial", $queryParameters, $channel);
+
+        if(!empty($commercialInfo)) {
+            return true;
+        }
+
+        return false;
+    }
 }
