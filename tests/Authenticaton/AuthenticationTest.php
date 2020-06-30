@@ -1,7 +1,9 @@
 <?php
 namespace TwitchClient\Tests\Authentication;
 
+use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
+use SebastianBergmann\RecursionContext\InvalidArgumentException;
 use TwitchClient\API\Auth\Authentication;
 use TwitchClient\Tests\LoadConfigTrait;
 
@@ -63,6 +65,9 @@ class AuthenticationTest extends TestCase
         $this->assertFalse($authApi->getAccessTokenFromReply());
     }
 
+    /**
+     * Tests refreshing a token from the API.
+     */
     public function testRefreshToken()
     {
         $oldAccessToken = self::$tokenProvider->getAccessToken(ACCESS_CHANNEL);
@@ -81,5 +86,15 @@ class AuthenticationTest extends TestCase
         // Test bad refresh
         $badReply = $authApi->refreshToken(uniqid());
         $this->assertFalse($badReply);
+    }
+
+    public function testClientCredentials()
+    {
+        $authApi = new Authentication(self::$tokenProvider);
+        $reply = $authApi->getClientCredentialsToken();
+
+        $this->assertInternalType('array', $reply);
+        $this->assertArrayHasKey('token', $reply);
+        $this->assertNotEmpty($reply['token']);
     }
 }

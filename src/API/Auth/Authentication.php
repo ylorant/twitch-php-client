@@ -111,6 +111,36 @@ class Authentication extends Client
     }
 
     /**
+     * Gets an access token to the Twitch API using the OAuth credentials scheme.
+     * 
+     * @param array $scopes The scopes to get the credentials for.
+     * 
+     * @return array|false An array containing 2 elements, or false if an error occurs. The array elements are these:
+     *                     - On the 'token' key, the actual access token.
+     *                     - On the 'refresh' key, the refresh token that will be used when the token expires.
+     */
+    public function getClientCredentialsToken($scopes = [])
+    {
+        $reply = $this->query(Client::QUERY_TYPE_POST, 'token', [
+            'client_id' => $this->tokenProvider->getClientID(),
+            'client_secret' => $this->tokenProvider->getClientSecret(),
+            'grant_type' => 'client_credentials',
+            'scope' => implode(' ', $scopes)
+        ]);
+
+        if(empty($reply)) {
+            return false;
+        }
+        
+        $token = [
+            'token' => $reply->access_token,
+            'refresh' => $reply->refresh_token ?? "" // Default value for refresh_token as apparently the doc
+        ];                                           // And the actual behavior don't match up
+
+        return $token;
+    }
+
+    /**
      * Refreshes a target's token 
      */
     public function refreshToken($target)
