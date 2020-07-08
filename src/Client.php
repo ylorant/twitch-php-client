@@ -204,10 +204,12 @@ abstract class Client
         }
 
         // Apply the needed header for the token
-        $authHeader = $this->getTokenHeader($accessToken);
+        if(!empty($accessToken)) {
+            $authHeader = $this->getTokenHeader($accessToken);
 
-        if (!empty($authHeader)) {
-            $httpHeaders[] = $authHeader;
+            if (!empty($authHeader)) {
+                $httpHeaders[] = $authHeader;
+            }
         }
 
             // Only POSTs and PUTs need to have data defined as body, in JSON
