@@ -20,7 +20,7 @@ class Helix extends Client
     const HELIX_BASEURL = "https://api.twitch.tv/helix";
     const SERVICES_NAMESPACE = "Services"; // Here, what Twitch calls "Resources" on its docs are called "Services" to maintain consistency
                                            // with the Kraken API.
-    const EXPIRED_TOKEN_ERROR_CODE = 400;
+    const TOKEN_ERROR_CODE = [400, 401];
     
     
     public function __construct(TokenProvider $tokenProvider)

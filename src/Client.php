@@ -32,7 +32,7 @@ abstract class Client
     ]; // Indicates which methods sends their data in the request body
 
     // Stores the error code that is sent by the API when a token is expired
-    const EXPIRED_TOKEN_ERROR_CODE = null;
+    const TOKEN_ERROR_CODE = [];
 
     // Error constants
     const ERROR_TOKEN_REFRESH_FAILED = 1; // Token renewal failed
@@ -169,7 +169,6 @@ abstract class Client
      */
     public function query($type, $url, array $parameters = [], $target = null, $skipTokenRefresh = false)
     {
-        $tries = 0;
         $replyCode = 0;
         $callUrl = $url;
 
@@ -192,22 +191,26 @@ abstract class Client
             $httpHeaders[] = $headerName . ": ". $headerValue;
         }
 
-        // If no target has been given, set it to the default one
-        if (empty($target)) {
-            $target = $this->getDefaultTarget();
-        }
+        $accessToken = $this->tokenProvider->getDefaultAccessToken();
 
-        // Now, really check if there is a target and apply the needed header
+        // If no target has been given, use the default token
         if (!empty($target)) {
             $accessToken = $this->tokenProvider->getAccessToken($target);
-            $authHeader = $this->getTokenHeader($accessToken);
-
-            if (!empty($authHeader)) {
-                $httpHeaders[] = $authHeader;
-            }
+        } elseif(!empty($this->getDefaultTarget())) {
+            $target = $this->getDefaultTarget();
+            $accessToken = $this->tokenProvider->getAccessToken($target);
+        } else {
+            $accessToken = $this->tokenProvider->getDefaultAccessToken();
         }
 
-        // Only POSTs and PUTs need to have data defined as body, in JSON
+        // Apply the needed header for the token
+        $authHeader = $this->getTokenHeader($accessToken);
+
+        if (!empty($authHeader)) {
+            $httpHeaders[] = $authHeader;
+        }
+
+            // Only POSTs and PUTs need to have data defined as body, in JSON
         if (in_array($type, self::DATA_QUERIES)) {
             $httpHeaders[] = 'Content-Type: application/json';
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($parameters));
@@ -254,12 +257,18 @@ abstract class Client
             return false;
         }
 
-        // Receiving a 401 code could mean our token is expired. We can try to resolve this by
+        // Receiving an error code could mean our token is expired. We can try to resolve this by
         // asking a refresh token, saving it and retrying. Of course, we don't do that when the query was
         // actually a token refresh.
-        if ($replyCode == static::EXPIRED_TOKEN_ERROR_CODE && !$skipTokenRefresh) {
+        if (in_array($replyCode, static::TOKEN_ERROR_CODE) && !$skipTokenRefresh) {
+            // A target is set, we refresh the token for it
             $authenticationAPI = new Authentication($this->tokenProvider);
-            $newToken = $authenticationAPI->refreshToken($target);
+
+            if(!empty($target)) {
+                $newToken = $authenticationAPI->refreshToken($target);
+            } else {
+                $newToken = $authenticationAPI->getClientCredentialsToken();
+            }
 
             // We return false if the new token has not been delivered, since it's considered a query failure.
             if (empty($newToken)) {

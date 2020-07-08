@@ -16,6 +16,8 @@ class DefaultTokenProvider implements TokenProvider
     protected $clientSecret;
     /** @var array The access tokens database */
     protected $tokens = [];
+    /** @var array The default token to use */
+    protected $defaultToken = [self::KEY_TOKEN => "", self::KEY_REFRESH => ""];
 
     // Constants
     const KEY_TOKEN = 'token';
@@ -47,6 +49,38 @@ class DefaultTokenProvider implements TokenProvider
     public function getClientSecret()
     {
         return $this->clientSecret;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultAccessToken()
+    {
+        return $this->defaultToken[self::KEY_TOKEN];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultRefreshToken()
+    {
+        return $this->defaultToken[self::KEY_REFRESH];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultAccessToken($accessToken)
+    {
+        $this->defaultToken[self::KEY_TOKEN] = $accessToken;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultRefreshToken($refreshToken)
+    {
+        $this->defaultToken[self::KEY_REFRESH] = $refreshToken;
     }
 
     /**

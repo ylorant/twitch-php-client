@@ -7,6 +7,7 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use TwitchClient\Client;
 use Monolog\Formatter\LineFormatter;
+use TwitchClient\API\Auth\Authentication;
 
 trait LoadConfigTrait
 {
@@ -42,5 +43,9 @@ trait LoadConfigTrait
         self::$logger->pushHandler($loggerHandler);
 
         Client::setLogger(self::$logger);
+
+        // Fetch the default token
+        $authenticationAPI = new Authentication(self::$tokenProvider);
+        $authenticationAPI->getClientCredentialsToken();
     }
 }

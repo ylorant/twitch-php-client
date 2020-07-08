@@ -83,12 +83,14 @@ class Authentication extends Client
      * 
      * @param string $code        The authorization code, usually sent from the authorize page.
      * @param string $redirectUri The redirect URI of the application set on the app settings on Twitch.
+     * @param string $target      The target for which to register the token on in the token provider. Optional, 
+     *                            will not register the token if omitted.
      * 
      * @return array|false An array containing 2 elements, or false if an error occurs. The array elements are these:
      *                     - On the 'token' key, the actual access token.
      *                     - On the 'refresh' key, the refresh token that will be used when the token expires.
      */
-    public function getAccessToken($code, $redirectUri = null)
+    public function getAccessToken($code, $redirectUri, $target = null)
     {
         $reply = $this->query(Client::QUERY_TYPE_POST, 'token', [
             'client_id' => $this->tokenProvider->getClientID(),
@@ -100,6 +102,11 @@ class Authentication extends Client
 
         if(empty($reply)) {
             return false;
+        }
+
+        if(!empty($target)) {
+            $this->tokenProvider->setAccessToken($target, $reply->access_token);
+            $this->tokenProvider->setRefreshToken($target, $reply->refresh_token);
         }
 
         $token = [
@@ -131,6 +138,10 @@ class Authentication extends Client
         if(empty($reply)) {
             return false;
         }
+
+        // Save the tokens as the default ones, as they're not linked to any target
+        $this->tokenProvider->setDefaultAccessToken($reply->access_token);
+        $this->tokenProvider->setDefaultRefreshToken($reply->refresh_token ?? "");
         
         $token = [
             'token' => $reply->access_token,

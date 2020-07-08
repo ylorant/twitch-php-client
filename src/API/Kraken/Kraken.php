@@ -21,7 +21,7 @@ class Kraken extends Client
 
     // Useful constants
     const SERVICES_NAMESPACE = "Services";
-    const EXPIRED_TOKEN_ERROR_CODE = 401;
+    const TOKEN_ERROR_CODE = [401];
 
     /**
      * Constructor, will do a scan of the services directory to discover them.

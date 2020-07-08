@@ -24,6 +24,38 @@ interface TokenProvider
     public function getClientSecret();
 
     /**
+     * Returns the default access token that will be used if no channel token
+     * is provided in a call.
+     * 
+     * @return string The default access token.
+     */
+    public function getDefaultAccessToken();
+
+    /**
+     * Sets the default access token that will be used if no channel token
+     * is provided in a call.
+     * 
+     * @param mixed $accessToken The access token to set as default.
+     */
+    public function setDefaultAccessToken($accessToken);
+
+    /**
+     * Returns the default refresh token that will be used if no channel token
+     * is provided in a call.
+     * 
+     * @return mixed The default refresh token.
+     */
+    public function getDefaultRefreshToken();
+
+    /**
+     * Sets the default refresh token that will be used if no channel token
+     * is provided in a call.
+     * 
+     * @param mixed $refreshToken The refresh token to set as default.
+     */
+    public function setDefaultRefreshToken($refreshToken);
+
+    /**
      * Returns the access token for the given target.
      * 
      * @param string $target The target (channel or account) that will need the token to have access to.
