@@ -79,14 +79,26 @@ if (!empty($_GET['code'])) {
 
 ## The TokenProvider interface
 
-Twitch API relies on user and app authentication to allow access to its API, so to account for that, this library
-uses a simple interface called the TokenProvider (at `TwitchClient\Authentication\TokenProvider`). This interface 
-describes how the library will retrieve app and user authentication.
+Twitch API relies on user and app authentication to allow access to its API (OAuth2), so to account for that,
+this library uses a simple interface called the TokenProvider (at `TwitchClient\Authentication\TokenProvider`).
+This interface describes how the library will retrieve app and user authentication.
 
 You can choose to implement your own token provider by creating an object implementing the `TokenProvider` interface,
 in case you need to store specifically your user tokens, or, if you use a more basic workflow that needs to set
 the tokens once, you can use the `DefaultTokenProvider` to implement a standard token provider functionality to the
-client.
+client. This default provider however will only save tokens in variables, so you won't have any persistence.
+
+The token provider works on a basic principle. You can register a set of tokens for a defined "target" channel. The 
+targeted channel can be different from the one you create a token with. Then, when you call an api method that will
+require some level of access, the library will try to fetch the tokens for the targetted channel.
+If the token has expired, the library will try to refresh it.
+
+When no targeted channel is needed, there is 2 cases that will happen to provide authentication :
+- You can provide a default target, that will make the library use the tokens linked to that target channel by default
+for all the calls where no target is defined. To use it, just call the `setDefaultTarget` method on your token provider.
+- You can set a default token, that isn't linked to any channel (using the client credentials flow). This won't need
+any user interaction to start queries, and is the minimum required step to use the Helix API. To automatically set it,
+initialize a new Authentication API client with your token provider, and call the `getClientCredentialsToken` method.
 
 ## Testing
 
