@@ -3,7 +3,6 @@ namespace TwitchClient\Tests\API\Helix;
 
 use PHPUnit\Framework\TestCase;
 use TwitchClient\API\Helix\Helix;
-use stdClass;
 use TwitchClient\Tests\LoadConfigTrait;
 
 class HelixTagsTest extends TestCase
