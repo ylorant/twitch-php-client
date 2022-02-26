@@ -1,23 +1,29 @@
-<phpunit bootstrap="vendor/autoload.php">
-    <!-- Settings as constants -->
-    <php>
-        <const name="CLIENT_ID" value="" />
-        <const name="CLIENT_SECRET" value="" />
-        <const name="REDIRECT_URI" value="" />
-        <const name="ACCESS_TOKEN" value="" />
-        <const name="ACCESS_REFRESH" value="" />
-        <const name="ACCESS_CHANNEL" value="" />
-    </php>
-
-    <!-- Test suites -->
-    <testsuites>
-        <testsuite name="tests">
-            <directory>tests</directory>
-        </testsuite>
-    </testsuites>
-
-    <!-- Code coverage -->
-    <logging>
-        <log type="coverage-html" target="tests/_reports/coverage" />
-    </logging>
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="vendor/autoload.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">src</directory>
+    </include>
+    <report>
+      <html outputDirectory="tests/_reports/coverage"/>
+    </report>
+  </coverage>
+  <!-- Settings as constants -->
+  <php>
+    <const name="CLIENT_ID" value=""/>
+    <const name="CLIENT_SECRET" value=""/>
+    <const name="REDIRECT_URI" value=""/>
+    <const name="ACCESS_TOKEN" value=""/>
+    <const name="ACCESS_REFRESH" value=""/>
+    <const name="ACCESS_CHANNEL" value=""/>
+    <const name="EMPTY_CHANNEL" value=""/>
+  </php>
+  <!-- Test suites -->
+  <testsuites>
+    <testsuite name="tests">
+      <directory>tests</directory>
+    </testsuite>
+  </testsuites>
+  <!-- Code coverage -->
+  <logging/>
 </phpunit>
