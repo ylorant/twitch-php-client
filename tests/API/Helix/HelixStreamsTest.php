@@ -8,7 +8,7 @@ use TwitchClient\API\Helix\Services\Streams;
 use TwitchClient\Tests\ExtraAssertionsTrait;
 use TwitchClient\Tests\LoadConfigTrait;
 
-class HelixTagsTest extends TestCase
+class HelixStreamsTest extends TestCase
 {
     use LoadConfigTrait;
     use ExtraAssertionsTrait;
@@ -40,14 +40,14 @@ class HelixTagsTest extends TestCase
         // Tests getting streams without any filter
         $streams = $streamsApi->getStreams();
         $sampleStream = reset($streams);
-        $this->assertInternalType('array', $streams);
+        $this->assertIsArray($streams);
         $this->assertInstanceOf(stdClass::class, $sampleStream);
         $this->assertObjectHasAttributes(self::STREAM_OBJECT_KEYS, $sampleStream);
 
         // Tries getting streams with a filter
         $streams = $streamsApi->getStreams([Streams::FILTER_LANGUAGE => "fr"], 20, false);
         $sampleStream = reset($streams);
-        $this->assertInternalType('array', $streams);
+        $this->assertIsArray($streams);
         $this->assertInstanceOf(stdClass::class, $sampleStream);
         $this->assertObjectHasAttributes(self::STREAM_OBJECT_KEYS, $sampleStream);
         $this->assertEquals('fr', $sampleStream->language);

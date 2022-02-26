@@ -17,7 +17,7 @@ trait LoadConfigTrait
     /**
      * Sets up common used parts in tests (token provider, logger).
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$tokenProvider = new DefaultTokenProvider(CLIENT_ID, CLIENT_SECRET);
         

@@ -93,7 +93,7 @@ class AuthenticationTest extends TestCase
         $authApi = new Authentication(self::$tokenProvider);
         $reply = $authApi->getClientCredentialsToken();
 
-        $this->assertInternalType('array', $reply);
+        $this->assertIsArray($reply);
         $this->assertArrayHasKey('token', $reply);
         $this->assertNotEmpty($reply['token']);
     }

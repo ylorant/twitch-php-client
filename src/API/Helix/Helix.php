@@ -59,6 +59,23 @@ class Helix extends Client
     }
 
     /**
+     * Executes a query with separate query parameters and query body. Useful for some Helix queries where
+     * you have to specify both a query filter and an update body. Rest is like the query() method.
+     * 
+     * @param array $parameters The parameters to give to the call as query string.
+     * @param array $body The parameters to give to the call as body.
+     * 
+     * @see self::query()
+     */
+    public function queryWithBody($type, $url, array $parameters = [], array $body = [], $accessChannel = null, $skipTokenRefresh = false)
+    {
+        $paramString = http_build_query($parameters);
+        $url .= "?" . $paramString;
+
+        return $this->query($type, $url, $body, $accessChannel, $skipTokenRefresh);
+    }
+
+    /**
      * Overrides the default client's query string building method to format it as the Helix API requires.
      * 
      * @see Client::buildQueryString()

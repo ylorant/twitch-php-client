@@ -11,6 +11,8 @@ use TwitchClient\Client;
  *
  * To get all of Twitch's API capabilities, go check their doc there :
  * https://dev.twitch.tv/docs/v5/
+ * 
+ * @deprecated
  */
 class Kraken extends Client
 {

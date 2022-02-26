@@ -24,11 +24,13 @@ abstract class Client
     const QUERY_TYPE_POST = "POST";
     const QUERY_TYPE_PUT = "PUT";
     const QUERY_TYPE_DELETE = "DELETE";
+    const QUERY_TYPE_PATCH = "PATCH";
     
     // Useful constants
     const DATA_QUERIES = [
         self::QUERY_TYPE_POST,
-        self::QUERY_TYPE_PUT
+        self::QUERY_TYPE_PUT,
+        self::QUERY_TYPE_PATCH
     ]; // Indicates which methods sends their data in the request body
 
     // Stores the error code that is sent by the API when a token is expired
@@ -152,9 +154,8 @@ abstract class Client
 
     /**
      * Executes a query on the Twitch API.
-     * This method allows to execute directly a query on Twitch's Kraken API.
-     * It takes into account whether it was called from
-     * a defined service or directly from the root Kraken class, to build the correct path.
+     * This method allows to execute directly a query on Twitch's API. It is usually overriden by the actual API
+     * class for specific usages.
      *
      * @param string $type             The query type. You can use Kraken::QUERY_TYPE_* enum values for
      *                                 easier understanding.

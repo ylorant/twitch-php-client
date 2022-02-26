@@ -19,7 +19,7 @@ class HelixTagsTest extends TestCase
         $tags = $tagsApi->getTags();
         
         $this->assertNotNull($tags);
-        $this->assertInternalType("array", $tags);
+        $this->assertIsArray($tags);
 
         // Twitch should have more than 20 available tags, so we check that the cursor is available
         $hasMoreResults = $tagsApi->hasMoreTags();
@@ -64,7 +64,7 @@ class HelixTagsTest extends TestCase
 
         $tags = $helix->tags->getStreamTags(ACCESS_CHANNEL);
 
-        $this->assertInternalType('array', $tags);
+        $this->assertIsArray($tags);
         
         $firstTag = reset($tags);
         $this->assertEquals($tagId, $firstTag->tag_id);

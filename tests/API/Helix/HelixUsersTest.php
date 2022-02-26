@@ -45,7 +45,6 @@ class HelixUsersTest extends TestCase
      */
     public function testUserId($userId)
     {
-
         $helix = new Helix(self::$tokenProvider);
         $fetchedUserId = $helix->users->fetchUserId(ACCESS_CHANNEL);
 
