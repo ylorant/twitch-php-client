@@ -50,6 +50,14 @@ class Users extends Service
         return $userData;
     }
 
+    /**
+     * Gets info on a specific user. User can be specified either by their ID or their login.
+     * 
+     * @param mixed $loginOrId The login or the user ID to get the info of.
+     * @return object An object containing the user's data.
+     * 
+     * @see https://dev.twitch.tv/docs/api/reference#get-users
+     */
     public function getUser($loginOrId = null)
     {
         $user = $this->getUsers(!is_null($loginOrId) ? [$loginOrId] : []);

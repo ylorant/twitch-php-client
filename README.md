@@ -21,7 +21,7 @@ Using composer:
 composer install ylorant/twitch-php-client
 ```
 
-## Basic usage (using Kraken)
+## Basic usage (using Helix)
 
 For more info about token providers and authentication, see the next section.
 
@@ -34,10 +34,10 @@ use TwitchClient\Authentication\DefaultTokenProvider;
 $tokenProvider = new DefaultTokenProvider('client_id', 'client_secret');
 
 // Create the client for the specific API we want to query, here it's Kraken
-$kraken = new Kraken($tokenProvider);
+$helix = new Helix($tokenProvider);
 
 // Fetch info for an user, for example
-$userInfo = $kraken->users->info('esamarathon');
+$userInfo = $helix->users->getUser('esamarathon');
 ```
 
 ## Authentication: getting tokens
