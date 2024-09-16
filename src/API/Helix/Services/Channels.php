@@ -71,6 +71,9 @@ class Channels extends Service
      *                       - broadcaster_language: The broadcast language.
      *                       - title: The stream title. If provided, cannot be empty.
      *                       - delay: Force a stream delay, only available for partner streams.
+     *                       - tags: The new tags.
+     *                       - content_classification_labels: The new CCLs for the channel.
+     *                       - is_branded_content: Whether the channel has branded content or not.
      * @param string|null $authenticationChannel The authentication channel to get the client token from in the
      *                                           token provider.
      * @return bool True if the update succeeded. Will throw an exception on error. 
