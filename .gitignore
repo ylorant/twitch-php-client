@@ -2,3 +2,4 @@ phpunit.xml
 vendor
 tests/_reports
 client_log.txt
+.phpunit.result.cache
