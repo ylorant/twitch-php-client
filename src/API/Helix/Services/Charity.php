@@ -10,6 +10,7 @@ use TwitchClient\Client;
 class Charity extends Service
 {
     const SERVICE_NAME = "charity";
+    const SCOPES = ['channel:read:charity'];
 
     /** @var string The cursor for pagination used in the getDonations() method. */
     protected $cursor;

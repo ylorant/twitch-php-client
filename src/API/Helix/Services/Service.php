@@ -12,6 +12,7 @@ abstract class Service
     protected $helix; //< Helix base object reference
 
     const SERVICE_NAME = "";
+    const SCOPES = [];
 
     /**
      * Service constructor.
@@ -30,5 +31,15 @@ abstract class Service
     public static function getServiceName()
     {
         return static::SERVICE_NAME;
+    }
+
+    /**
+     * Returns the service's scopes from the defined constants in subclasses.
+     * 
+     * @return array The service's scopes.
+     */
+    public static function getScopes()
+    {
+        return static::SCOPES;
     }
 }

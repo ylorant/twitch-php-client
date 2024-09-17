@@ -45,7 +45,6 @@ class HelixCharityTest extends TestCase
         if(count($donations) > 0) {
             $sampleDonation = reset($donations);
             $this->assertEquals($campaignId, $sampleDonation->campaign_id);
-            $this->assertEquals(ACCESS_CHANNEL, $donations->broadcaster_name);
         }
     }
 }

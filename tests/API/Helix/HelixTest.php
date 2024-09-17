@@ -4,6 +4,7 @@ namespace TwitchClient\Tests\API\Helix;
 use PHPUnit\Framework\TestCase;
 use TwitchClient\Tests\LoadConfigTrait;
 use TwitchClient\API\Helix\Helix;
+use TwitchClient\API\Helix\Services\Charity;
 
 class HelixTest extends TestCase
 {
@@ -39,5 +40,30 @@ class HelixTest extends TestCase
         $result = $helix->buildQueryString($sourceData);
 
         $this->assertEquals($expected, $result);
+    }
+
+    public function testGetAllScopes()
+    {
+        $helix = new Helix(self::$tokenProvider);
+        $result = $helix->getScopes();
+
+        $this->assertIsArray($result);
+    }
+
+    public function testGetServiceScopes()
+    {
+        $helix = new Helix(self::$tokenProvider);
+        $result = $helix->getScopes(Charity::getServiceName());
+
+        $this->assertIsArray($result);
+        $this->assertContains('channel:read:charity', $result);
+    }
+
+    public function testNonExistingServiceScope()
+    {
+        $helix = new Helix(self::$tokenProvider);
+        $result = $helix->getScopes('unknown_service');
+
+        $this->assertFalse($result);
     }
 }

@@ -3,6 +3,7 @@
 use TwitchClient\API\Auth\Authentication;
 use TwitchClient\Authentication\DefaultTokenProvider;
 use League\CLImate\CLImate;
+use TwitchClient\API\Helix\Helix;
 
 require __DIR__. '/../../vendor/autoload.php';
 
@@ -26,12 +27,17 @@ $tokenProvider = new DefaultTokenProvider($parameters['CLIENT_ID'], $parameters[
 $redirectUri = $parameters['REDIRECT_URI'];
 
 $climate->br()->out("For which scopes would you like to create the token ?");
-$climate->out("Enter a space-separated list of scopes:");
+$climate->out("Enter a space-separated list of scopes (or nothing for all scopes):");
 
 $input = $climate->input(">>>");
 $scopes = $input->prompt();
 
-$scopes = explode(" ", $scopes);
+if (strlen($scopes) > 0) {
+    $scopes = explode(" ", $scopes);
+} else {
+    $helix = new Helix($tokenProvider);
+    $scopes = $helix->getScopes();
+}
 
 // Getting auth URL and showing it
 $authenticationAPI = new Authentication($tokenProvider);

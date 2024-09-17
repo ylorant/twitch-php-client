@@ -121,7 +121,7 @@ class Helix extends Client
                 $serviceName = $className::getServiceName();
 
                 if (!empty($serviceName) && !isset($this->services[$serviceName])) {
-                    $this->services[$serviceName] = new $className($this);
+                    $this->services[$serviceName] = $className;
                 }
             }
         }
@@ -136,10 +136,37 @@ class Helix extends Client
     public function getService($serviceName)
     {
         if (isset($this->services[$serviceName])) {
-            return $this->services[$serviceName];
+            $className = $this->services[$serviceName];
+            return new $className($this);
         } else {
             return null;
         }
+    }
+
+    /**
+     * Gets the required scopes for the given service, or all the available scopes.
+     * 
+     * @param string|null $serviceName The service to get the required scopes of, or null for all the scopes.
+     * @return array|bool A list of all the scopes matching the request, or false if the requested service doesn't exist.
+     */
+    public function getScopes($serviceName = null)
+    {
+        if ($serviceName) {
+            if (isset($this->services[$serviceName])) {
+                $serviceClass = $this->services[$serviceName];
+                return $serviceClass::getScopes();
+            }
+
+            return false;
+        }
+
+        // Default case, return all the available scopes
+        $scopes = [];
+        foreach ($this->services as $serviceClass) {
+            $scopes = array_merge($scopes, $serviceClass::getScopes());
+        }
+
+        return $scopes;
     }
 
     /**
