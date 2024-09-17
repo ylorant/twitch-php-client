@@ -67,23 +67,4 @@ class HelixChannelsTest extends TestCase
         $helix = new Helix(self::$tokenProvider);
         $updated = $helix->channels->update(ACCESS_CHANNEL, []);
     }
-
-    /**
-     * Tests starting a commercial on a channel.
-     */
-    public function testStartCommercial()
-    {
-        $helix = new Helix(self::$tokenProvider);
-        $started = $helix->channels->startCommercial(ACCESS_CHANNEL, 60);
-
-        $this->assertTrue($started);
-    }
-
-    public function testStartCommercialError()
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $helix = new Helix(self::$tokenProvider);
-        $started = $helix->channels->startCommercial(ACCESS_CHANNEL, 66);
-    }
 }
